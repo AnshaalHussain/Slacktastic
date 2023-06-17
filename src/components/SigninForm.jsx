@@ -35,6 +35,7 @@ const SignInForm = () => {
 
     setEmail("");
     setPassword("");
+    setError("");
   };
 
   return (

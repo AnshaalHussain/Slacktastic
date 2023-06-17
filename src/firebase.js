@@ -6,12 +6,12 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAugZqs5-3--TatiXOO-iDQ7jwz8TwlUp0",
-  authDomain: "slacktastic-79bc0.firebaseapp.com",
-  projectId: "slacktastic-79bc0",
-  storageBucket: "slacktastic-79bc0.appspot.com",
-  messagingSenderId: "909296469273",
-  appId: "1:909296469273:web:d57b13ec16c60f79dc3188",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
