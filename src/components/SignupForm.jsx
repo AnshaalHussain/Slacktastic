@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { THEMES } from "../styles/colors";
 
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -15,9 +16,8 @@ const SignupForm = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const auth = getAuth();
-
-  const createUser = () => {
+  const handleSignUp = (e) => {
+    e.preventDefault();
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
@@ -71,7 +71,7 @@ const SignupForm = () => {
                   backgroundColor: THEMES.tertiary,
                   marginTop: "1rem",
                 }}
-                onClick={() => createUser(auth, email, password)}
+                onClick={(e) => handleSignUp(e)}
               >
                 Sign Up
               </Button>

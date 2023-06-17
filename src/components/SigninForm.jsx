@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { THEMES } from "../styles/colors";
 
+import { auth } from "../firebase";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 import Button from "@mui/material/Button";
@@ -10,25 +11,30 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/system/Unstable_Grid/Grid";
 import { Box } from "@mui/system";
 
-const SigninForm = () => {
+const SignInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const auth = getAuth();
+  const handleSignIn = (e) => {
+    e.preventDefault();
 
-  const signIn = (auth, email, password) => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
+
         const user = userCredential.user;
-        // ...
+        console.log(user);
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         setError(errorMessage);
+        console.log(error);
       });
+
+    setEmail("");
+    setPassword("");
   };
 
   return (
@@ -72,7 +78,7 @@ const SigninForm = () => {
                   backgroundColor: THEMES.tertiary,
                   marginTop: "1rem",
                 }}
-                onClick={() => signIn(auth, email, password)}
+                onClick={(e) => handleSignIn(e)}
               >
                 Sign In
               </Button>
@@ -86,4 +92,4 @@ const SigninForm = () => {
   );
 };
 
-export default SigninForm;
+export default SignInForm;

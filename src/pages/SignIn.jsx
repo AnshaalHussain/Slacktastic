@@ -4,7 +4,7 @@ import { THEMES } from "../styles/colors";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 
-import SigninForm from "../components/SigninForm";
+import SignInForm from "../components/SignInForm";
 
 const SignIn = () => {
   return (
@@ -41,7 +41,8 @@ const SignIn = () => {
             For every user, a Slacktastic account was made. <br /> ...And for
             every user, it ends well.
           </Box>
-          <SigninForm />
+          <SignInForm />
+
           <a href="#">
             <Box
               sx={{
