@@ -1,28 +1,27 @@
 import "./App.css";
-import { THEMES } from "./styles/colors";
+import { Routes, Route } from "react-router-dom";
 
-import Box from "@mui/material/Box";
-
-import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import SignIn from "./pages/SignIn";
+import Messages from "./pages/Messages";
+import Error from "./pages/Error";
+import PrivateRoutesLayout from "./pages/PrivateRoutesLayout";
 
 function App() {
   return (
     <>
       <div className="App">
-        <Box
-          sx={{
-            backgroundColor: THEMES.primary,
-            color: THEMES.platinum,
-            textAlign: "center",
-            minHeight: "100vh",
-          }}
-        >
-          <header className="App-header">
-            <SignIn />
-            <SignUp />
-          </header>
-        </Box>
+        <Routes>
+          <Route path="/" element={<Messages />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="*" element={<Error />} />
+
+          {/* protected routes */}
+          <Route element={<PrivateRoutesLayout />}>
+            <Route path="/home" element={<Messages />} />
+          </Route>
+        </Routes>
       </div>
     </>
   );
