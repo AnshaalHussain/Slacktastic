@@ -43,6 +43,7 @@ const SignIn = () => {
               For every user, a Slacktastic account was made. <br /> ...And for
               every user, it ends well.
             </Box>
+
             <SignInForm />
 
             <a href="/signup">

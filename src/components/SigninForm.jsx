@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { THEMES } from "../styles/colors";
 
 import { auth } from "../firebase";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
+
+import { useNavigate, useLocation } from "react-router";
 
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -14,28 +16,30 @@ import { Box } from "@mui/system";
 const SignInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || "/signin";
 
   const handleSignIn = (e) => {
     e.preventDefault();
 
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed in
-
         const user = userCredential.user;
-        console.log(user);
+        navigate(from, { replace: true });
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         setError(errorMessage);
-        console.log(error);
       });
 
     setEmail("");
     setPassword("");
-    setError("");
+    setError(null);
   };
 
   return (
@@ -60,6 +64,7 @@ const SignInForm = () => {
               <TextField
                 variant="filled"
                 label="Password"
+                type="password"
                 margin="normal"
                 size="small"
                 style={{
@@ -70,6 +75,16 @@ const SignInForm = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
 
+              {error && (
+                <Box
+                  paddingTop="0.5rem"
+                  paddingBottom="0.5rem"
+                  color={THEMES.platinum}
+                >
+                  {error}
+                </Box>
+              )}
+
               <Button
                 variant="contained"
                 size="large"
@@ -78,13 +93,12 @@ const SignInForm = () => {
                   color: THEMES.secondary,
                   backgroundColor: THEMES.tertiary,
                   marginTop: "1rem",
+                  marginBottom: "1rem",
                 }}
                 onClick={(e) => handleSignIn(e)}
               >
                 Sign In
               </Button>
-
-              {error ? <div>{error}</div> : <div></div>}
             </Stack>
           </Box>
         </Grid>
