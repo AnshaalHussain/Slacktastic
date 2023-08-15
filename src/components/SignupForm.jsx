@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { THEMES } from "../styles/colors";
 
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  updateProfile,
+} from "firebase/auth";
+import { useNavigate, useLocation } from "react-router";
 
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -13,21 +19,61 @@ import { Box } from "@mui/system";
 const SignupForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [error, setError] = useState(null);
 
-  const auth = getAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const createUser = () => {
+  const from = location.state?.from?.pathname || "/";
+
+  const handleSignUp = (e) => {
+    e.preventDefault();
+
+    if (!email || !password || !confirmPassword || !displayName) {
+      setError("Missing Field(s).");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords did not match.");
+      return;
+    }
+
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        // ...
+
+        if (user && auth.currentUser) {
+          try {
+            // sendEmailVerification(auth.currentUser);
+            updateProfile(auth.currentUser, {
+              displayName: displayName,
+              photoURL: "https://robohash.org/2?set=set2",
+            });
+
+            console.log("currentUser", auth.currentUser);
+          } catch (error) {
+            console.log(error);
+          }
+        }
+
+        navigate(from, { replace: true });
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setDisplayName("");
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         setError(errorMessage);
+
+        if (errorCode === "auth/email-already-in-use") {
+          setError("Email already exists!");
+        }
       });
   };
 
@@ -51,7 +97,21 @@ const SignupForm = () => {
               />
               <TextField
                 variant="filled"
+                label="Display name"
+                margin="normal"
+                size="small"
+                style={{
+                  color: THEMES.primary,
+                  backgroundColor: THEMES.secondary,
+                }}
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+              />
+
+              <TextField
+                variant="filled"
                 label="Password"
+                type="password"
                 margin="normal"
                 size="small"
                 style={{
@@ -62,6 +122,30 @@ const SignupForm = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
 
+              <TextField
+                variant="filled"
+                label="Confirm Password"
+                type="password"
+                margin="normal"
+                size="small"
+                style={{
+                  color: THEMES.primary,
+                  backgroundColor: THEMES.secondary,
+                }}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+
+              {error && (
+                <Box
+                  paddingTop="0.5rem"
+                  paddingBottom="0.5rem"
+                  color={THEMES.warning}
+                >
+                  {error}
+                </Box>
+              )}
+
               <Button
                 variant="contained"
                 size="large"
@@ -70,22 +154,12 @@ const SignupForm = () => {
                   color: THEMES.secondary,
                   backgroundColor: THEMES.tertiary,
                   marginTop: "1rem",
+                  marginBottom: "1rem",
                 }}
-                onClick={() => createUser(auth, email, password)}
+                onClick={(e) => handleSignUp(e)}
               >
                 Sign Up
               </Button>
-              {error ? (
-                <Box
-                  paddingTop="0.5rem"
-                  paddingBottom="0.5rem"
-                  color={THEMES.warning}
-                >
-                  {error}
-                </Box>
-              ) : (
-                <Box></Box>
-              )}
             </Stack>
           </Box>
         </Grid>
